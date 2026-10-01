@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TD2 exo2</title>
+
+  <!-- GSAP voir https://greensock.com/docs/v3/Installation#installer -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+    }
+    #terrain {
+      height: 800px;
+      background-color: rgb(241, 225, 200);
+    }
+    .car {
+      position: absolute;
+      width: 112px;
+      height: 75px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="terrain">
+    <!-- voiture adaptée de https://freesvg.org/pink-car-top-view-vector-illustration -->
+    <img id="car" class="car" src="supersportive-dessus.svg"/>
+  </div>
+
+  <!-- panneau de boutons pour animer les voitures -->
+  <div style="margin: 10px;">
+    <button onclick="reset()">Reset</button>
+    <button onclick="animation1()">Animation 1</button>
+    <button onclick="animation2()">Animation 2</button>
+    <button onclick="animation3()">Animation 3</button>
+  </div>
+
+  <script>
+
+// éléments HTML
+const terrain = document.getElementById("terrain")
+const car = document.getElementById("car")
+
+// limites du terrain
+function xmax() {
+  return terrain.offsetWidth - car.offsetWidth
+}
+function ymax() {
+  return terrain.offsetHeight - car.offsetHeight
+}
+
+
+// mettre en place la situation de départ commune
+function reset() {
+  // arrêter toutes les animations
+  gsap.killTweensOf(car)
+
+  // position initiale de la voiture (relatives au terrain)
+  gsap.set(car, {x: 50, y: 200, rotation: 0})
+}
+
+// appel initial
+reset()
+
+
+/**
+ * séquence de mouvements simples placés à la main dans le temps
+ */
+function animation1() {
+  // délais cumulatifs
+  gsap.to(car, {x: xmax()-50, duration: 6, ease: "power2.inOut" })
+  gsap.to(car, {rotation: 90, duration: 1, delay: 6, ease: "power2.inOut" })
+  gsap.to(car, {y: ymax()-50, duration: 4, delay: 7, ease: "power2.inOut" })
+}
+
+
+/**
+ * séquence de mouvements simples placés dans une timeline
+ */
+function animation2() {
+  // timeline
+  const TL = gsap.timeline()
+
+  // événements
+  TL.to(car, {x: xmax()-50, duration: 6, ease: "power2.inOut" })
+  TL.to(car, {rotation: 90, duration: 1, ease: "none" })
+  TL.to(car, {y: ymax()-50, duration: 4, ease: "power2.inOut" })
+}
+
+
+/**
+ * passage par quelques points clés
+ */
+function animation3() {
+  gsap.to(car, {
+    motionPath: {
+      path: [
+        // TODO ajouter d'autres points ici
+        {x: xmax() -200, y: 200},
+        {x: xmax() -90, y: 450},
+        {x: xmax() -200, y: 500},
+        {x: xmax() -300, y: 700},
+        {x: xmax() -0, y: 790}
+      ],
+      // TODO configuration du chemin
+      
+      autoRotate: true,
+      curviness: 1.5,
+      repeat: -1,
+    },
+    duration: 5,
+    ease: "power2.inOut",
+  })
+}
+
+  </script>
+</body>
+</html>

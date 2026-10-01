@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TD2 exo1</title>
+
+  <!-- GSAP, voir https://greensock.com/docs/v3/Installation#installer -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <!-- utilisation du mixin SVGelement -->
+  <script src="svgelement.js"></script>
+
+  <!-- styles -->
+  <style>
+    h1 {
+      font-family: sans-serif;
+      background-color: rgb(249, 255, 240);
+      margin: 0px;
+    }
+    text {
+      text-anchor: middle;
+      font-size: 24px;
+      font-family: "sans-serif";
+      stroke: none;
+      letter-spacing: 0px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Titre dans un dessin SVG</h1>
+  <!-- dessin SVG créé et modifié par les scripts JS -->
+  <svg xmlns="http://www.w3.org/2000/svg"
+        width="30%"
+        viewBox="0 0 100 100"
+        id="dessin">
+    <!-- texte qui va être animé de différentes manières -->
+    <text id="titre" x="0" y="0">Bonjour</text>
+  </svg>
+
+  <!-- panneau de boutons pour animer le titre -->
+  <div style="margin: 10px;">
+    <button onclick="reset()">Reset</button>
+    <button onclick="animation1()">Animation 1</button>
+    <button onclick="animation2()">Animation 2</button>
+    <button onclick="animation3()">Animation 3</button>
+    <button onclick="animation4()">Animation 4</button>
+    <button onclick="animation5()">Animation 5</button>
+  </div>
+
+  <script>
+// éléments du dessin SVG
+const titre = SVGelement.fromSelector("#titre")
+
+// mettre en place la situation de départ commune
+function reset() {
+  // interrompre les animations du titre
+  gsap.killTweensOf(titre);
+  // définir l'état au repos
+  gsap.set(titre, {
+    x: 0,   // piège : x et y ici sont des translations, voir transform-origin
+    y: 0,
+    scale: 1,
+    fill: "black",
+    font: "24px sans-serif",
+    letterSpacing: "0px",
+    attr: {
+      x: 50,  // piège : ici, x et y sont des positions
+      y: 50,
+      fill: "black",
+      opacity: 1,
+      "transform-origin": "100 50", // référence des translations
+    }
+  })
+}
+
+// appeler la fonction une première fois
+reset()
+
+
+function animation1() {
+  // mettre en place la situation de départ
+  reset()
+  gsap.set(titre, {
+    y: -60,     // translation
+  //  attr: {
+  //    y: -10,       // position
+  //  },
+  })
+  // animer vers la situation finale
+  gsap.to(titre, {
+    y: 0,     // translation
+  //  attr: {
+  //    y: 50,       // position
+  //  },
+    duration: 2,
+    ease: "power2.out",
+  })
+}
+
+function animation2() {
+  // mettre en place la situation de départ
+  reset()
+  gsap.set(titre, {
+    // TODO mettre opacity à 0
+    opacity: 0
+  })
+  // animer vers la situation finale
+  gsap.to(titre, {
+    // TODO mettre opacity à 1
+    duration: 2,
+    ease: "power2.in",
+    opacity: 1
+  })
+}
+
+function animation3() {
+  // mettre en place la situation de départ
+  reset()
+  gsap.set(titre, {
+    // TODO mettre fill à red
+    fill: "red"
+  })
+  // animer vers la situation finale
+  gsap.to(titre, {
+    // TODO mettre fill à green
+    duration: 3,
+    ease: "none",
+    fill: "green"
+  })
+}
+
+function animation4() {
+  // mettre en place la situation de départ
+  reset()
+  gsap.set(titre, {
+    // TODO mettre le style à 'font: 0px sans-serif;'
+    font: "0px sans-serif"
+  })
+  // animer vers la situation finale
+  gsap.to(titre, {
+    // TODO mettre le style à 'font: 24px sans-serif;'
+    duration: 2,
+    ease: "power2.in",
+    font: "24px sans-serif"
+  })
+}
+
+function animation5() {
+  // mettre en place la situation de départ
+  reset()
+  gsap.set(titre, {
+    // TODO initialiser à 'font: 24px sans-serif; letter-spacing: 20px'
+    font: "24px sans-serif",
+    letterSpacing: "20px"
+  })
+  // animer vers la situation finale
+  gsap.to(titre, {
+    // TODO animer vers 'font: 24px sans-serif; letter-spacing: 0px'
+    duration: 2,
+    ease: "power2.out",
+    font: "24px sans-serif",
+    letterSpacing: "0px"
+  })
+}
+
+  </script>
+
+  <div style="margin:12px 0;">
+  <button onclick="opReset()">Réinitialiser</button>
+  <button onclick="opAnim()">Opacité 0 → 1 (attr:opacity)</button>
+</div>
+<svg id="demo2" width="420" height="140" viewBox="0 0 420 140" style="border:1px solid #ccc;background:#eef">
+  <text id="opText" x="210" y="70" text-anchor="middle" style="font:24px sans-serif; fill:#333;">Opacité</text>
+</svg>
+<script>
+  const opT = document.getElementById('opText');
+  function opReset(){
+    opT.setAttribute('opacity','1');
+  }
+  function opAnim(){
+    let start=0, end=1, dur=1000, t0=performance.now();
+    opT.setAttribute('opacity', start);
+    function step(ts){
+      const k=Math.min(1,(ts-t0)/dur);
+      const v = start + (end-start)*k;
+      opT.setAttribute('opacity', v);
+      if(k<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  opReset();
+</script>
+
+<div style="margin:12px 0;">
+  <button onclick="colReset()">Réinitialiser</button>
+  <button onclick="colAnim()">Couleur HSL rouge → vert</button>
+</div>
+<svg id="demo3" width="420" height="140" viewBox="0 0 420 140" style="border:1px solid #ccc;background:#eef">
+  <text id="colText" x="210" y="70" text-anchor="middle" style="font:24px sans-serif; fill:hsl(0,100%,50%);">Couleur</text>
+</svg>
+<script>
+  const colT = document.getElementById('colText');
+  function colReset(){ colT.setAttribute('fill','hsl(0,100%,50%)'); }
+  function colAnim(){
+    let h0=0, h1=150, s=100, l0=50, l1=40, dur=1000, t0=performance.now();
+    function step(ts){
+      const k=Math.min(1,(ts-t0)/dur);
+      const h = h0 + (h1-h0)*k;
+      const l = l0 + (l1-l0)*k;
+      colT.setAttribute('fill', `hsl(${h}, ${s}%, ${l}%)`);
+      if(k<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  colReset();
+</script>
+
+<div style="margin:12px 0;">
+  <button onclick="fontReset()">Réinitialiser</button>
+  <button onclick="fontAnim()">Font 0px → 24px</button>
+</div>
+<svg id="demo4" width="420" height="140" viewBox="0 0 420 140" style="border:1px solid #ccc;background:#eef">
+  <text id="fontText" x="210" y="75" text-anchor="middle" style="font:0px sans-serif; fill:#333;">Police</text>
+</svg>
+<script>
+  const fT = document.getElementById('fontText');
+  function fontReset(){ fT.setAttribute('style','font:24px sans-serif; fill:#333;'); }
+  function fontAnim(){
+    let start=0, end=24, dur=800, t0=performance.now();
+    function step(ts){
+      const k=Math.min(1,(ts-t0)/dur);
+      const v = start + (end-start)*k;
+      fT.setAttribute('style', `font:${v}px sans-serif; fill:#333;`);
+      if(k<1) requestAnimationFrame(step);
+    }
+    fT.setAttribute('style','font:0px sans-serif; fill:#333;');
+    requestAnimationFrame(step);
+  }
+  fontReset();
+</script>
+
+<div style="margin:12px 0;">
+  <button onclick="lsReset()">Réinitialiser</button>
+  <button onclick="lsAnim()">Espacement 20px → 0px</button>
+</div>
+<svg id="demo5" width="520" height="140" viewBox="0 0 520 140" style="border:1px solid #ccc;background:#eef">
+  <text id="lsText" x="260" y="75" text-anchor="middle" style="font:24px sans-serif; letter-spacing:0px; fill:#333;">LETTER SPACING</text>
+</svg>
+<script>
+  const lsT = document.getElementById('lsText');
+  function lsReset(){ lsT.setAttribute('style','font:24px sans-serif; letter-spacing:0px; fill:#333;'); }
+  function lsAnim(){
+    let start=20, end=0, dur=1000, t0=performance.now();
+    function step(ts){
+      const k=Math.min(1,(ts-t0)/dur);
+      const v = start + (end-start)*k;
+      lsT.setAttribute('style', `font:24px sans-serif; letter-spacing:${v}px; fill:#333;`);
+      if(k<1) requestAnimationFrame(step);
+    }
+    lsT.setAttribute('style','font:24px sans-serif; letter-spacing:20px; fill:#333;');
+    requestAnimationFrame(step);
+  }
+  lsReset();
+</script>
+</body>
+</html>

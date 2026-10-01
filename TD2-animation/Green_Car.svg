@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100">
+  <!-- Corps principal de la voiture -->
+  <rect x="20" y="40" width="160" height="50" rx="10" ry="10" fill="#22aa55" stroke="#1a8a45" stroke-width="2"/>
+
+  <!-- Toit de la voiture -->
+  <rect x="40" y="25" width="120" height="35" rx="8" ry="8" fill="#2bb866" stroke="#1a8a45" stroke-width="2"/>
+
+  <!-- Pare-brise avant -->
+  <rect x="45" y="30" width="25" height="25" rx="3" ry="3" fill="#87ceeb" stroke="#4682b4" stroke-width="1" opacity="0.8"/>
+
+  <!-- Pare-brise arrière -->
+  <rect x="130" y="30" width="25" height="25" rx="3" ry="3" fill="#87ceeb" stroke="#4682b4" stroke-width="1" opacity="0.8"/>
+
+  <!-- Roue avant gauche -->
+  <circle cx="50" cy="85" r="12" fill="#333" stroke="#222" stroke-width="2"/>
+  <circle cx="50" cy="85" r="8" fill="#555"/>
+  <circle cx="50" cy="85" r="4" fill="#777"/>
+
+  <!-- Roue avant droite -->
+  <circle cx="50" cy="85" r="12" fill="#333" stroke="#222" stroke-width="2" transform="translate(0, -5)"/>
+  <circle cx="50" cy="85" r="8" fill="#555" transform="translate(0, -5)"/>
+  <circle cx="50" cy="85" r="4" fill="#777" transform="translate(0, -5)"/>
+
+  <!-- Roue arrière gauche -->
+  <circle cx="150" cy="85" r="12" fill="#333" stroke="#222" stroke-width="2"/>
+  <circle cx="150" cy="85" r="8" fill="#555"/>
+  <circle cx="150" cy="85" r="4" fill="#777"/>
+
+  <!-- Roue arrière droite -->
+  <circle cx="150" cy="85" r="12" fill="#333" stroke="#222" stroke-width="2" transform="translate(0, -5)"/>
+  <circle cx="150" cy="85" r="8" fill="#555" transform="translate(0, -5)"/>
+  <circle cx="150" cy="85" r="4" fill="#777" transform="translate(0, -5)"/>
+
+  <!-- Phares avant -->
+  <circle cx="25" cy="55" r="6" fill="#ffff99" stroke="#ffcc00" stroke-width="1"/>
+  <circle cx="25" cy="55" r="3" fill="#ffffff"/>
+
+  <!-- Phares arrière -->
+  <circle cx="175" cy="55" r="5" fill="#ff6666" stroke="#cc0000" stroke-width="1"/>
+
+  <!-- Portes -->
+  <rect x="75" y="45" width="20" height="35" fill="#1a8a45" stroke="#0f6a35" stroke-width="1"/>
+  <rect x="105" y="45" width="20" height="35" fill="#1a8a45" stroke="#0f6a35" stroke-width="1"/>
+
+  <!-- Poignées de portes -->
+  <rect x="92" y="50" width="3" height="8" fill="#666" rx="1"/>
+  <rect x="122" y="50" width="3" height="8" fill="#666" rx="1"/>
+
+  <!-- Antenne -->
+  <line x1="100" y1="25" x2="100" y2="15" stroke="#333" stroke-width="2"/>
+  <circle cx="100" cy="15" r="2" fill="#ff0000"/>
+
+  <!-- Détails décoratifs -->
+  <rect x="30" y="50" width="140" height="2" fill="#1a8a45"/>
+  <rect x="30" y="65" width="140" height="2" fill="#1a8a45"/>
+
+  <!-- Logo ou emblème -->
+  <circle cx="100" cy="60" r="8" fill="#ffffff" stroke="#1a8a45" stroke-width="2"/>
+  <text x="100" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#1a8a45" font-weight="bold">V</text>
+</svg>

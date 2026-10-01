@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="50 -20 1150 540" width="1150" height="540">
+  <title>Supersportive – vue du dessus</title>
+  <defs>
+    <!-- Lumière zénithale : bords sombres, centre clair -->
+    <linearGradient id="bodyTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a0308"/>
+      <stop offset="0.12" stop-color="#a00a14"/>
+      <stop offset="0.3" stop-color="#e8202a"/>
+      <stop offset="0.5" stop-color="#c8121c"/>
+      <stop offset="0.7" stop-color="#e8202a"/>
+      <stop offset="0.88" stop-color="#a00a14"/>
+      <stop offset="1" stop-color="#4a0308"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8c0812"/>
+      <stop offset="0.35" stop-color="#e4222c"/>
+      <stop offset="0.65" stop-color="#e4222c"/>
+      <stop offset="1" stop-color="#8c0812"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0a0f18"/>
+      <stop offset="0.6" stop-color="#1c2636"/>
+      <stop offset="1" stop-color="#5f7390"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="haunch" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff7a6e" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ff7a6e" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="carbon" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="#15171b"/>
+      <path d="M0 0h3v3H0zM3 3h3v3H3z" fill="#24272d"/>
+    </pattern>
+    <filter id="soft" x="-10%" y="-20%" width="120%" height="140%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+
+    <path id="outline" d="M 90,250
+      C 88,170 92,100 120,72
+      C 170,40 230,22 300,20
+      C 370,18 410,30 450,45
+      C 500,62 540,64 600,64
+      C 700,64 780,52 860,38
+      C 900,32 950,32 990,42
+      C 1060,60 1120,92 1150,140
+      C 1165,170 1168,210 1168,250
+      C 1168,290 1165,330 1150,360
+      C 1120,408 1060,440 990,458
+      C 950,468 900,468 860,462
+      C 780,448 700,436 600,436
+      C 540,436 500,438 450,455
+      C 410,470 370,482 300,480
+      C 230,478 170,460 120,428
+      C 92,400 88,330 90,250 Z"/>
+  </defs>
+
+  <!-- Ombre portée -->
+  <use href="#outline" fill="#000" opacity="0.4" filter="url(#soft)" transform="translate(8,10)"/>
+
+  <!-- Pneus (dépassent légèrement des ailes) -->
+  <g fill="#111214">
+    <rect x="220" y="12" width="160" height="66" rx="18"/>
+    <rect x="220" y="422" width="160" height="66" rx="18"/>
+    <rect x="852" y="30" width="156" height="60" rx="18"/>
+    <rect x="852" y="410" width="156" height="60" rx="18"/>
+  </g>
+
+  <!-- Échappements -->
+  <rect x="76" y="226" width="20" height="16" rx="6" fill="#9aa1aa" stroke="#3a3d43"/>
+  <rect x="76" y="258" width="20" height="16" rx="6" fill="#9aa1aa" stroke="#3a3d43"/>
+
+  <!-- Carrosserie -->
+  <use href="#outline" fill="url(#bodyTop)" stroke="#2a0104" stroke-width="1.5"/>
+
+  <!-- Volume des ailes -->
+  <ellipse cx="305" cy="78" rx="120" ry="42" fill="url(#haunch)"/>
+  <ellipse cx="305" cy="422" rx="120" ry="42" fill="url(#haunch)"/>
+  <ellipse cx="935" cy="88" rx="105" ry="36" fill="url(#haunch)"/>
+  <ellipse cx="935" cy="412" rx="105" ry="36" fill="url(#haunch)"/>
+
+  <!-- Prises d'air latérales (vues d'en haut) -->
+  <path d="M 440,58 C 490,74 540,80 590,80 L 585,96 C 530,96 480,90 432,74 Z" fill="#0f0205"/>
+  <path d="M 440,442 C 490,426 540,420 590,420 L 585,404 C 530,404 480,410 432,426 Z" fill="#0f0205"/>
+
+  <!-- Capot moteur à persiennes -->
+  <path d="M 300,150 C 340,140 420,136 470,140 L 470,360 C 420,364 340,360 300,350 Z" fill="url(#carbon)" stroke="#000" stroke-width="1"/>
+  <g stroke="#0a0a0c" stroke-width="5" stroke-linecap="round">
+    <path d="M 320,160 L 320,340"/>
+    <path d="M 345,155 L 345,345"/>
+    <path d="M 370,152 L 370,348"/>
+    <path d="M 395,150 L 395,350"/>
+    <path d="M 420,148 L 420,352"/>
+    <path d="M 445,147 L 445,353"/>
+  </g>
+
+  <!-- Vitrage (lunette, pare-brise) -->
+  <path d="M 470,250 C 470,180 500,140 560,128 C 640,112 740,114 792,136 C 822,150 834,200 834,250 C 834,300 822,350 792,364 C 740,386 640,388 560,372 C 500,360 470,320 470,250 Z" fill="url(#glass)" stroke="#05070b" stroke-width="2"/>
+
+  <!-- Toit -->
+  <path d="M 572,250 C 572,180 586,152 616,148 L 704,146 C 722,150 730,196 730,250 C 730,304 722,350 704,354 L 616,352 C 586,348 572,320 572,250 Z" fill="url(#roof)" stroke="#2a0104" stroke-width="1.2"/>
+
+  <!-- Reflets vitrage -->
+  <path d="M 748,140 C 790,150 812,180 818,222 L 804,222 C 798,186 780,160 742,150 Z" fill="#fff" fill-opacity="0.22"/>
+  <path d="M 500,190 L 540,162 L 548,170 L 510,200 Z" fill="#fff" fill-opacity="0.12"/>
+
+  <!-- Rétroviseurs -->
+  <g stroke="#1a0103" stroke-width="6" stroke-linecap="round">
+    <path d="M 828,62 L 838,40"/>
+    <path d="M 828,438 L 838,460"/>
+  </g>
+  <path d="M 818,40 C 818,22 828,12 842,12 C 856,12 864,22 862,40 Z" fill="#c8121c" stroke="#2a0104" stroke-width="1.2"/>
+  <path d="M 818,460 C 818,478 828,488 842,488 C 856,488 864,478 862,460 Z" fill="#c8121c" stroke="#2a0104" stroke-width="1.2"/>
+
+  <!-- Nervures du capot avant -->
+  <path d="M 840,180 C 950,170 1060,170 1140,190" fill="none" stroke="#ff9a90" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M 840,320 C 950,330 1060,330 1140,310" fill="none" stroke="#ff9a90" stroke-opacity="0.4" stroke-width="2"/>
+
+  <!-- Extracteurs de capot avant -->
+  <path d="M 1020,196 L 1090,200 L 1096,236 L 1022,232 Z" fill="#0f0205"/>
+  <path d="M 1020,304 L 1090,300 L 1096,264 L 1022,268 Z" fill="#0f0205"/>
+  <g stroke="#2a0d10" stroke-width="2">
+    <path d="M 1040,198 L 1042,233"/><path d="M 1060,199 L 1063,234"/><path d="M 1080,200 L 1084,235"/>
+    <path d="M 1040,302 L 1042,267"/><path d="M 1060,301 L 1063,266"/><path d="M 1080,300 L 1084,265"/>
+  </g>
+
+  <!-- Feux avant -->
+  <g>
+    <path d="M 1068,72 L 1140,128 L 1132,136 L 1062,82 Z" fill="#9fdcff" filter="url(#glow)" opacity="0.9"/>
+    <path d="M 1068,72 L 1140,128 L 1132,136 L 1062,82 Z" fill="#f2fbff"/>
+    <path d="M 1068,428 L 1140,372 L 1132,364 L 1062,418 Z" fill="#9fdcff" filter="url(#glow)" opacity="0.9"/>
+    <path d="M 1068,428 L 1140,372 L 1132,364 L 1062,418 Z" fill="#f2fbff"/>
+  </g>
+
+  <!-- Reflet longitudinal -->
+  <path d="M 140,120 C 300,96 500,108 600,100 C 760,90 900,80 1100,120" fill="none" stroke="url(#sheen)" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Feux arrière -->
+  <path d="M 93,110 C 90,180 90,320 93,390" fill="none" stroke="#ff1a1a" stroke-width="7" filter="url(#glow)"/>
+  <path d="M 93,110 C 90,180 90,320 93,390" fill="none" stroke="#ff4d4d" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Aileron arrière -->
+  <path d="M 104,46 C 140,42 170,42 196,46 L 196,454 C 170,458 140,458 104,454 Z" fill="url(#carbon)" stroke="#000" stroke-width="1.2"/>
+  <path d="M 112,60 L 188,60 M 112,440 L 188,440" stroke="#3a3d43" stroke-width="1"/>
+  <rect x="98" y="38" width="104" height="10" rx="3" fill="#111"/>
+  <rect x="98" y="452" width="104" height="10" rx="3" fill="#111"/>
+</svg>
