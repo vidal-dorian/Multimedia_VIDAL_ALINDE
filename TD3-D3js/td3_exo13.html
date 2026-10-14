@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TD3 exo 1.3</title>
+    <!-- voir https://d3js.org/getting-started -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+<ul id="liste"></ul>
+<script>
+    const aliments = [
+        {nom: "chocolat", article: "du"},
+        {nom: "brioche", article: "de la"},
+        {nom: "lait", article: "du"},
+    ]
+    const liste = d3.select("#liste")
+    liste.selectAll("li")        // 1. Sélection (même vide) : Définit les éléments cibles (existants ou non)
+        .data(aliments)            // 2. Liaison aux données : Associe chaque donnée à un élément DOM
+        .join("li")                // 3. Ajustement DOM ↔ données : Crée/supprime/met à jour les éléments
+        .text(d => `Je dois acheter ${d.article} ${d.nom}`)
+
+    aliments.push(
+        {nom: "confiture", article: "de la"},
+        {nom: "café", article: "du"},
+    )
+
+    liste.selectAll("li")
+        .data(aliments)
+        .join(
+            enter => {
+                // enter = sélection des nouveaux éléments, pour les nouvelles données
+                enter.append("li").text(d => `Et j'y rajoute ${d.article} ${d.nom}`)
+            },
+            update => {
+                // update = sélection des éléments déjà là qu'il faut évent. modifier
+                update //.text(d => `Je dois déjà acheter ${d.article} ${d.nom}`)
+            },
+            exit => {
+                // exit = éléments à supprimer car en trop par rapport aux données
+                exit.remove()
+            }
+        )
+</script>
+</body>
+</html>

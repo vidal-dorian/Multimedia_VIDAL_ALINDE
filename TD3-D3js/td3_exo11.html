@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TD3 exo 1.1</title>
+    <!-- voir https://d3js.org/getting-started -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+<ul id="liste"></ul>
+<script>
+    const aliments = ["chocolat", "brioche", "lait", "confiture", "café", "beurre"]
+    const liste = d3.select("#liste")
+    liste.selectAll("li")        // 1. Sélection (même vide) : Définit les éléments cibles (existants ou non)
+        .data(aliments)            // 2. Liaison aux données : Associe chaque donnée à un élément DOM
+        .join("li")                // 3. Ajustement DOM ↔ données : Crée/supprime/met à jour les éléments
+        .text(d => d)              // 4. Définition du contenu
+        // Chaîne de template ES6
+        .text(d => `Je dois acheter du/de la ${d}`)
+
+        // Ajout d'attributs de style
+        .text(d => d)
+        .attr("style", "list-style-type: circle;")
+
+        // Méthode recommandée pour les styles
+        .style("list-style-type", "square")
+        .style("font-family", "cursive")
+
+        // Imbrication de sous-éléments
+        .append("tt")
+        .text(d => d)
+</script>
+</body>
+</html>

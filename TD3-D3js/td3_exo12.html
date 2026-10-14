@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TD3 exo 1.2</title>
+    <!-- voir https://d3js.org/getting-started -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+<ul id="liste"></ul>
+<script>
+    const aliments = [
+        {nom: "chocolat", article: "du"},
+        {nom: "brioche", article: "de la"},
+        {nom: "lait", article: "du"},
+    ]
+    const liste = d3.select("#liste")
+    liste.selectAll("li")        // 1. Sélection (même vide) : Définit les éléments cibles (existants ou non)
+        .data(aliments)            // 2. Liaison aux données : Associe chaque donnée à un élément DOM
+        .join("li")                // 3. Ajustement DOM ↔ données : Crée/supprime/met à jour les éléments
+        .text(d => `Je dois acheter ${d.article} ${d.nom}`)
+</script>
+</body>
+</html>
