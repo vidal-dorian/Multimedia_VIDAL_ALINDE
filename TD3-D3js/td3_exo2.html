@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TD3 exo 2</title>
+<!-- voir https://d3js.org/getting-started -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="iris.json" defer></script>
+</head>
+<body>
+<svg id="dessin"></svg>
+<script>
+    const width = 400
+    const height = 200
+
+    const colors = {
+            "setosa": "#69b3a2",
+            "versicolor": "#a269b3",
+            "virginica": "#b3a269",
+        }
+
+    function ScatterPlot(iris) {
+    console.log(iris) // à supprimer une fois que c'est ok
+    }
+
+    d3.json("iris.json")
+    .then(iris => ScatterPlot(iris))
+
+    // async function main() {
+    //     const iris = await d3.json("iris.json")
+    //     ScatterPlot(iris)
+    // }
+    // main()
+
+    function ScatterPlot(iris) {
+        const svg = d3.select("#dessin")
+        svg.attr("viewBox", `-5 -5 ${width+10} ${height+10}`)
+        svg.selectAll("circle")
+            .data(iris)
+            .join("circle")
+            .attr("cx", d => d.sepalLength * 80 - 260)
+            .attr("cy", d => d.petalLength * 25)
+            .attr("r", width / 100)
+            .attr("fill", d => colors[d.species])
+    }
+</script>
+</body>
+</html>
