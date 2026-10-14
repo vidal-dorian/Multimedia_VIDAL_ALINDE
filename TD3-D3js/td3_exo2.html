@@ -6,10 +6,13 @@
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 </head>
 <body>
-<svg id="dessin"></svg>
+<svg id="dessin">
+    <g id="gTitresAxes"></g>
+</svg>
 <script>
     const width = 400
     const height = 200
+    const margin = {top: 20, right: 10, bottom: 30, left: 40}
     const colors = {
         "setosa": "#69b3a2",
         "versicolor": "#a269b3",
@@ -23,14 +26,46 @@
 
     function ScatterPlot(iris) {
         const svg = d3.select('#dessin')
-        svg.attr("viewBox", `-5 -5 ${width+10} ${height+10}`)
+        const gTitresAxes = d3.select("#gTitresAxes")
+        svg.attr("viewBox", `0 0 ${width} ${height}`)
+        const fX = d3.scaleLinear()
+            .domain(d3.extent(iris, d => d.sepalLength)) // amplitude des données
+            .range([margin.left, width - margin.right]) // amplitude des pixels
+
+        const fY = d3.scaleLinear()
+            .domain(d3.extent(iris, d => d.petalLength)) // amplitude des données
+            .range([height - margin.bottom, margin.top]) // amplitude des pixels
+
         svg.selectAll("circle")
             .data(iris)
             .join("circle")
-            .attr("cx", d => d.sepalLength * 80 - 260)
+            .attr("cx",  d => fX(d.sepalLength))
             .attr("cy", d => height - (d.petalLength * 25)) // height - pour inverser le sens
             .attr("r", width / 100)
             .attr("fill", d => colors[d.species])
+
+        svg.append("g")
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(fX))
+
+        svg.append("g")
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(fY))
+
+
+        gTitresAxes.append("text")
+            .attr("x", width - margin.right)
+            .attr("y", height)
+            .attr("dominant-baseline", "ideographic")
+            .text("sepalLength")
+            .attr("text-anchor", "middle")
+
+        gTitresAxes.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -margin.top)
+            .attr("y", 0)
+            .attr("dominant-baseline", "hanging")
+            .text("petalLength")
 
     }
     main()
