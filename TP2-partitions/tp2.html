@@ -1,0 +1,104 @@
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Dessin SVG avec d3.js</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" id="dessin"></svg>
+
+  <script type="module">
+
+// voir https://stackoverflow.com/a/65056488 (append if not exist)
+d3.selection.prototype.appendIfAbsent = function(selector, type) {
+  const element = this.select(selector)
+  return element.empty() ? this.append(type) : element
+};
+
+function PartitionFloue(trapezes) {
+    console.log("TRAPEZES", trapezes);
+    const svg = d3.select("#dessin");
+    const width = 600;
+    const height = width / 4;
+    svg.selectAll("svg")
+      .attr("cx", d => d.sepalLength * 80 - 260)
+      .attr("cy", d => d.petalLength * 25)
+    svg.attr("viewBox", `-5 -5 ${width+10} ${height+10}`)
+
+    const margin = {top: 20, right: 10, bottom: 20, left: 10};
+
+    const N = 4;
+
+    const fX = d3.scaleLinear()
+      .domain([ trapezes[0].supL - 1, trapezes[N-1].supH + 1 ])
+      .range([0, width - margin.right]);
+
+    const fY = d3.scaleLinear()
+      .domain([0, 1])
+      .range([height - margin.bottom, margin.top]);
+
+    const bottom = fY(0);
+    const top = fY(1);
+
+    svg.append("g")
+    .attr("transform", `translate(0,${bottom})`)
+    .call(d3.axisBottom(fX))
+
+    svg.append("g")
+    .attr("transform", `translate(0,${top})`)
+    .call(d3.axisTop(fX))
+
+    const grpTrapezes = svg.append("g");
+
+    const fColor = d3.scaleOrdinal()
+      .domain([0, 1, 2, 3])
+      .range(d3.schemeSet2);
+
+    grpTrapezes.selectAll("g.trap-group")
+      .data(trapezes)
+      .join(
+        enter => {
+          const g = enter.append("g");
+
+          g.append("path")
+            .attr("class", "trapeze")
+            .attr("d", d => {
+              return `M ${fX(d.supL)} ${fY(0)} ` +
+                    `L ${fX(d.corL)} ${fY(1)} ` +
+                    `L ${fX(d.corH)} ${fY(1)} ` +
+                    `L ${fX(d.supH)} ${fY(0)} Z`;
+            })
+            .attr("fill", (d, i) => fColor(i))
+            .attr("stroke", (d, i) => fColor(i))        
+            .attr("stroke-width", 2)
+            .attr("fill-opacity", 0.4);
+
+          g.append("text")
+            .text(d => d.nom)
+            .attr("x", d => (fX((d.supL + d.supH) / 2)))
+            .attr("y", d => (fY(0.5)))
+            .attr("text-anchor", "middle")
+        }
+      );
+};
+
+const Trapezes = [
+    { id: 0, supL: 5, corL: 11, corH: 14, supH: 18, nom: "froid" },
+    { id: 1, supL: 14, corL: 18, corH: 20, supH: 22, nom: "frais" },
+    { id: 2, supL: 20, corL: 22, corH: 24, supH: 30, nom: "tiède" },
+    { id: 3, supL: 24, corL: 30, corH: 38, supH: 42, nom: "chaud" },
+];
+
+PartitionFloue(Trapezes)
+
+// const Trapezes2 = [
+//     { id: -1, supL: 0, corL: 0, corH: 5, supH: 11, nom: "glacial" },
+//     ...Trapezes, // ajout ici des éléments de Trapezes
+//     { id: 4, supL: 38, corL: 42, corH: 60, supH: 80, nom: "brûlant" },
+// ]
+// PartitionFloue(Trapezes2)
+
+// ici, il y aura les scripts d3.js pour créer, modifier et animer l'image SVG (enlever ce commentaire)
+  </script>
+</body>
+</html>
