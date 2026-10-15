@@ -17,9 +17,9 @@
 
     const margin = {top: 20, right: 10, bottom: 20, left: 10}
 
-    const N = 4
+    const N = 6
 
-    function PartitionFloue(trapezes) {
+    function PartitionFloue(trapezes, transform = null) {
         console.log("TRAPEZES", trapezes)
         const svg = d3.select("#dessin")
         const width = 600
@@ -29,6 +29,16 @@
         const fX = d3.scaleLinear()
             .domain([ trapezes[0].supL - 1, trapezes[N-1].supH + 1 ]) // amplitude des données
             .range([margin.left, width - margin.right]) // amplitude des pixels
+
+        if (transform !== null) {
+            fX = transform.rescaleX(fX)
+        } else {
+            const zoom = d3.zoom()
+                .extent([[0, 0], [width, height]])
+                .scaleExtent([0.25, 64])
+                .on("zoom", ({transform}) => PartitionFloue(trapezes, transform))
+            svg.call(zoom)
+        }
 
         const fY = d3.scaleLinear()
             .domain([0, 1]) // amplitude des données
@@ -41,19 +51,21 @@
         const bottom = fY(0)
         const top = fY(1)
 
-        svg.append("g")
+        svg.appendIfAbsent("#axeBas", "g")
+            .attr("id", "axeBas")
             .attr("transform", `translate(0,${bottom})`)
             .call(d3.axisBottom(fX))
 
-        svg.append("g")
+        svg.appendIfAbsent("#axeHaut", "g")
+            .attr("id", "axeBas")
             .attr("transform", `translate(0,${top})`)
             .call(d3.axisTop(fX))
 
-        const grpTrapezes = svg.append("g")
+        const grpTrapezes = svg.appendIfAbsent("#grpTrapezes", "g").attr("id", "grpTrapezes")
 
         grpTrapezes
             .selectAll("g")
-            .data(trapezes)
+            .data(trapezes, d => d.id)
             .join(
                 enter => {
                     const g = enter.append("g")
@@ -74,6 +86,17 @@
                         .attr("text-anchor", "middle")
                         .style("fill", "black")
                         .style("font-size", "12px")
+                },
+                update => {
+                    update.select("path")
+                        .attr("d", d => {
+                            return `M ${fX(d.supL)} ${fY(0)} L ${fX(d.corL)} ${fY(1)} L ${fX(d.corH)} ${fY(1)} L ${fX(d.supH)} ${fY(0)} Z`;
+                        })
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                    update.select("text")
+                        .text(trp => trp.nom)
+                        .attr("x", d => fX((d.supL + d.supH) / 2))
                 }
             )
     }
@@ -84,7 +107,13 @@
         { id: 2, supL: 20, corL: 22, corH: 24, supH: 30, nom: "tiède" },
         { id: 3, supL: 24, corL: 30, corH: 38, supH: 42, nom: "chaud" },
     ]
-    PartitionFloue(Trapezes)
+
+    const Trapezes2 = [
+        { id: -1, supL: 0, corL: 0, corH: 5, supH: 11, nom: "glacial" },
+        ...Trapezes, // ajout ici des éléments de Trapezes
+        { id: 4, supL: 38, corL: 42, corH: 60, supH: 80, nom: "brûlant" },
+    ]
+    PartitionFloue(Trapezes2)
 </script>
 </body>
 </html>
