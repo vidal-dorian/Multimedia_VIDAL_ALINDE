@@ -26,7 +26,7 @@
         const height = width / 4
         svg.attr("viewBox", `0 0 ${width} ${height}`)
 
-        const fX = d3.scaleLinear()
+        let fX = d3.scaleLinear()
             .domain([ trapezes[0].supL - 1, trapezes[N-1].supH + 1 ]) // amplitude des données
             .range([margin.left, width - margin.right]) // amplitude des pixels
 
@@ -39,6 +39,7 @@
                 .on("zoom", ({transform}) => PartitionFloue(trapezes, transform))
             svg.call(zoom)
         }
+
 
         const fY = d3.scaleLinear()
             .domain([0, 1]) // amplitude des données
@@ -57,9 +58,25 @@
             .call(d3.axisBottom(fX))
 
         svg.appendIfAbsent("#axeHaut", "g")
-            .attr("id", "axeBas")
+            .attr("id", "axeHaut")
             .attr("transform", `translate(0,${top})`)
             .call(d3.axisTop(fX))
+
+        function onDragCorL(event, trp) {
+            let x = fX.invert(event.x)
+            if (x < trp.supL || x > trp.corH) return
+            trp.corL = x
+            if (trp.prec !== null) trp.prec.supH = x
+            PartitionFloue(trapezes, transform)
+        }
+
+        function onDragCorH(event, trp) {
+            let x = fX.invert(event.x)
+            if (x < trp.corL || x > trp.supH) return
+            trp.corH = x
+            if (trp.next !== null) trp.next.supL = x
+            PartitionFloue(trapezes, transform)
+        }
 
         const grpTrapezes = svg.appendIfAbsent("#grpTrapezes", "g").attr("id", "grpTrapezes")
 
@@ -86,6 +103,24 @@
                         .attr("text-anchor", "middle")
                         .style("fill", "black")
                         .style("font-size", "12px")
+
+                    g.append("circle")
+                        .classed("corL", true)
+                        .attr("r", 5)
+                        .attr("cx", d => fX(d.corL))
+                        .attr("cy", fY(1))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorL))
+
+                    g.append("circle")
+                        .classed("corH", true)
+                        .attr("r", 5)
+                        .attr("cx", d => fX(d.corH))
+                        .attr("cy", fY(1))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorH))
                 },
                 update => {
                     update.select("path")
@@ -97,9 +132,34 @@
                     update.select("text")
                         .text(trp => trp.nom)
                         .attr("x", d => fX((d.supL + d.supH) / 2))
+                    update.select("circle.corL")
+                        .attr("cx", d => fX(d.corL))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorL))
+                    update.select("circle.corH")
+                        .attr("cx", d => fX(d.corH))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorH))
                 }
             )
     }
+
+    function lierTrapezes(trapezes) {
+        trapezes.forEach(trp => {
+            trp.prec = null
+            trp.next = null
+        })
+        let precedent = null
+        trapezes.forEach(trp => {
+            trp.prec = precedent
+            if (precedent !== null) precedent.next = trp
+            precedent = trp
+        })
+    }
+
+
 
     const Trapezes = [
         { id: 0, supL: 5, corL: 11, corH: 14, supH: 18, nom: "froid" },
@@ -113,6 +173,7 @@
         ...Trapezes, // ajout ici des éléments de Trapezes
         { id: 4, supL: 38, corL: 42, corH: 60, supH: 80, nom: "brûlant" },
     ]
+    lierTrapezes(Trapezes2)
     PartitionFloue(Trapezes2)
 </script>
 </body>
