@@ -8,97 +8,196 @@
   <svg xmlns="http://www.w3.org/2000/svg" id="dessin"></svg>
 
   <script type="module">
+    // voir https://stackoverflow.com/a/65056488 (append if not exist)
+    d3.selection.prototype.appendIfAbsent = function(selector, type) {
+        const element = this.select(selector)
+        return element.empty() ? this.append(type) : element
+    }
 
-// voir https://stackoverflow.com/a/65056488 (append if not exist)
-d3.selection.prototype.appendIfAbsent = function(selector, type) {
-  const element = this.select(selector)
-  return element.empty() ? this.append(type) : element
-};
+    const margin = {top: 20, right: 10, bottom: 20, left: 10}
 
-function PartitionFloue(trapezes) {
-    console.log("TRAPEZES", trapezes);
-    const svg = d3.select("#dessin");
-    const width = 600;
-    const height = width / 4;
-    svg.selectAll("svg")
-      .attr("cx", d => d.sepalLength * 80 - 260)
-      .attr("cy", d => d.petalLength * 25)
-    svg.attr("viewBox", `-5 -5 ${width+10} ${height+10}`)
+    const N = 6
 
-    const margin = {top: 20, right: 10, bottom: 20, left: 10};
+    function PartitionFloue(trapezes, transform = null) {
+        console.log("TRAPEZES", trapezes)
+        
+        const svg = d3.select("#dessin")
+        const width = 600
+        const height = width / 4
+        
+        svg.attr("viewBox", `0 0 ${width} ${height}`)
 
-    const N = 4;
+        let fX = d3.scaleLinear()
+            .domain([ trapezes[0].supL - 1, trapezes[N-1].supH + 1 ]) // amplitude des données
+            .range([margin.left, width - margin.right]) // amplitude des pixels
 
-    const fX = d3.scaleLinear()
-      .domain([ trapezes[0].supL - 1, trapezes[N-1].supH + 1 ])
-      .range([0, width - margin.right]);
+        if (transform !== null) {
+            fX = transform.rescaleX(fX)
 
-    const fY = d3.scaleLinear()
-      .domain([0, 1])
-      .range([height - margin.bottom, margin.top]);
+        } else {
+            const zoom = d3.zoom()
+                .extent([[0, 0], [width, height]])
+                .scaleExtent([0.25, 64])
+                .on("zoom", ({transform}) => PartitionFloue(trapezes, transform))
 
-    const bottom = fY(0);
-    const top = fY(1);
-
-    svg.append("g")
-    .attr("transform", `translate(0,${bottom})`)
-    .call(d3.axisBottom(fX))
-
-    svg.append("g")
-    .attr("transform", `translate(0,${top})`)
-    .call(d3.axisTop(fX))
-
-    const grpTrapezes = svg.append("g");
-
-    const fColor = d3.scaleOrdinal()
-      .domain([0, 1, 2, 3])
-      .range(d3.schemeSet2);
-
-    grpTrapezes.selectAll("g.trap-group")
-      .data(trapezes)
-      .join(
-        enter => {
-          const g = enter.append("g");
-
-          g.append("path")
-            .attr("class", "trapeze")
-            .attr("d", d => {
-              return `M ${fX(d.supL)} ${fY(0)} ` +
-                    `L ${fX(d.corL)} ${fY(1)} ` +
-                    `L ${fX(d.corH)} ${fY(1)} ` +
-                    `L ${fX(d.supH)} ${fY(0)} Z`;
-            })
-            .attr("fill", (d, i) => fColor(i))
-            .attr("stroke", (d, i) => fColor(i))        
-            .attr("stroke-width", 2)
-            .attr("fill-opacity", 0.4);
-
-          g.append("text")
-            .text(d => d.nom)
-            .attr("x", d => (fX((d.supL + d.supH) / 2)))
-            .attr("y", d => (fY(0.5)))
-            .attr("text-anchor", "middle")
+            svg.call(zoom)
         }
-      );
-};
 
-const Trapezes = [
-    { id: 0, supL: 5, corL: 11, corH: 14, supH: 18, nom: "froid" },
-    { id: 1, supL: 14, corL: 18, corH: 20, supH: 22, nom: "frais" },
-    { id: 2, supL: 20, corL: 22, corH: 24, supH: 30, nom: "tiède" },
-    { id: 3, supL: 24, corL: 30, corH: 38, supH: 42, nom: "chaud" },
-];
 
-PartitionFloue(Trapezes)
+        const fY = d3.scaleLinear()
+            .domain([0, 1]) // amplitude des données
+            .range([height - margin.bottom, margin.top]) // amplitude des pixels
 
-// const Trapezes2 = [
-//     { id: -1, supL: 0, corL: 0, corH: 5, supH: 11, nom: "glacial" },
-//     ...Trapezes, // ajout ici des éléments de Trapezes
-//     { id: 4, supL: 38, corL: 42, corH: 60, supH: 80, nom: "brûlant" },
-// ]
-// PartitionFloue(Trapezes2)
+        const fColor = d3.scaleOrdinal()
+            .domain([0, 1, 2, 3])
+            .range(d3.schemeSet2)
 
-// ici, il y aura les scripts d3.js pour créer, modifier et animer l'image SVG (enlever ce commentaire)
+        const bottom = fY(0)
+        const top = fY(1)
+
+        svg.appendIfAbsent("#axeBas", "g")
+            .attr("id", "axeBas")
+            .attr("transform", `translate(0,${bottom})`)
+            .call(d3.axisBottom(fX))
+
+        svg.appendIfAbsent("#axeHaut", "g")
+            .attr("id", "axeHaut")
+            .attr("transform", `translate(0,${top})`)
+            .call(d3.axisTop(fX))
+
+        function onDragCorL(event, trp) {
+            let x = fX.invert(event.x)
+
+            if (x < trp.supL || x > trp.corH) return
+            trp.corL = x
+
+            if (trp.prec !== null) trp.prec.supH = x
+
+            PartitionFloue(trapezes, transform)
+        }
+
+        function onDragCorH(event, trp) {
+            let x = fX.invert(event.x)
+
+            if (x < trp.corL || x > trp.supH) return
+            trp.corH = x
+
+            if (trp.next !== null) trp.next.supL = x
+
+            PartitionFloue(trapezes, transform)
+        }
+
+        const grpTrapezes = svg.appendIfAbsent("#grpTrapezes", "g")
+                            .attr("id", "grpTrapezes")
+
+        grpTrapezes
+            .selectAll("g")
+            .data(trapezes, d => d.id)
+            .join(
+                enter => {
+                    const g = enter.append("g")
+                    g.append("path")
+                        .attr("class", "trapeze")
+                        .attr("d", d => {
+                            return `M ${fX(d.supL)} ${fY(0)} 
+                                    L ${fX(d.corL)} ${fY(1)} 
+                                    L ${fX(d.corH)} ${fY(1)} 
+                                    L ${fX(d.supH)} ${fY(0)} 
+                                    Z`;
+                        })
+                        .attr("fill", (d,i) => fColor(i))
+                        .attr("fill-opacity", 0.4)
+                        .attr("stroke", (d,i) => fColor(i))
+                        .attr("stroke-width", 2)
+
+                    g.append("text")
+                        .text(trp => trp.nom)
+                        .attr("x", d => fX((d.supL + d.supH) / 2))
+                        .attr("y", fY(0.5))
+                        .attr("text-anchor", "middle")
+                        .style("fill", "black")
+                        .style("font-size", "12px")
+
+                    g.append("circle")
+                        .classed("corL", true)
+                        .attr("r", 5)
+                        .attr("cx", d => fX(d.corL))
+                        .attr("cy", fY(1))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorL))
+
+                    g.append("circle")
+                        .classed("corH", true)
+                        .attr("r", 5)
+                        .attr("cx", d => fX(d.corH))
+                        .attr("cy", fY(1))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorH))
+                },
+                update => {
+                    update.select("path")
+                        .attr("d", d => {
+                            return `M ${fX(d.supL)} ${fY(0)} 
+                                    L ${fX(d.corL)} ${fY(1)} 
+                                    L ${fX(d.corH)} ${fY(1)} 
+                                    L ${fX(d.supH)} ${fY(0)} 
+                                    Z`;
+                        })
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+
+                    update.select("text")
+                        .text(trp => trp.nom)
+                        .attr("x", d => fX((d.supL + d.supH) / 2))
+
+                    update.select("circle.corL")
+                        .attr("cx", d => fX(d.corL))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorL))
+
+                    update.select("circle.corH")
+                        .attr("cx", d => fX(d.corH))
+                        .attr("fill", (d, i) => fColor(i))
+                        .attr("stroke", (d, i) => fColor(i))
+                        .call(d3.drag().on("drag", onDragCorH))
+                }
+            )
+    }
+
+    function lierTrapezes(trapezes) {
+        trapezes.forEach(trp => {
+            trp.prec = null
+            trp.next = null
+        })
+
+        let precedent = null
+
+        trapezes.forEach(trp => {
+            trp.prec = precedent
+            if (precedent !== null) precedent.next = trp
+            precedent = trp
+        })
+    }
+
+
+
+    const Trapezes = [
+        { id: 0, supL: 5, corL: 11, corH: 14, supH: 18, nom: "froid" },
+        { id: 1, supL: 14, corL: 18, corH: 20, supH: 22, nom: "frais" },
+        { id: 2, supL: 20, corL: 22, corH: 24, supH: 30, nom: "tiède" },
+        { id: 3, supL: 24, corL: 30, corH: 38, supH: 42, nom: "chaud" },
+    ]
+
+    const Trapezes2 = [
+        { id: -1, supL: 0, corL: 0, corH: 5, supH: 11, nom: "glacial" },
+        ...Trapezes, // ajout des éléments de Trapezes
+        { id: 4, supL: 38, corL: 42, corH: 60, supH: 80, nom: "brûlant" },
+    ]
+    lierTrapezes(Trapezes2)
+    PartitionFloue(Trapezes2)
   </script>
 </body>
 </html>
